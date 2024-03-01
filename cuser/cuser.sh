@@ -1,12 +1,8 @@
 #!/bin/bash
 
-# Function to go back to the first menu
-go_back() {
-    # echo "Returning to the main menu."
-    gum spin --spinner dot --title "Returning to the main menu..." -- sleep 1
-    usertype_menu
-}
-
+################
+## OPERATIONS ##
+################
 # Function to create a superadmin user
 create_superadmin() {
     username=$(gum input --placeholder "Enter username for superadmin: ")
@@ -18,7 +14,6 @@ create_superadmin() {
     gum spin --title "Setting permissions..." -- sudo chmod 440 /etc/sudoers.d/$username
     echo "Superadmin user $username created successfully."
 }
-
 # Function to create an adminuser
 create_adminuser() {
     username=$(gum input --placeholder "Enter username for adminuser: ")
@@ -28,7 +23,6 @@ create_adminuser() {
     gum spin --title "Adding to sudo group..." -- sudo usermod -aG sudo $username
     echo "Adminuser $username created successfully with password authentication."
 }
-
 # Function to create a regular user
 create_regular_user() {
     username=$(gum input --placeholder "Enter username for regular user: ")
@@ -36,30 +30,11 @@ create_regular_user() {
     gum spin --title "Creating regular user..." -- sudo useradd -m $username
     echo "Regular user $username created successfully."
 }
-
-# Function to delete a user
-delete_user_menu() {
-    choice=$(gum choose "Yup" "Go back" "Quit")
-    choice_menu=$choice
-    case "$choice" in
-        "Yup")
-            delete_user "$choice_menu"
-            ;;
-        "Go back")
-            main_menu
-            ;;
-        "Quit")
-            quit_script
-            ;;
-    esac
-}
-
 delete_user() {
     username=$(gum input --placeholder "Enter username to delete: ")
     gum spin --title "Deleting user..." -- sudo userdel -r $username
     echo "User $username deleted successfully."
 }
-
 # Function to quit the script
 quit_script() {
     # echo "Exiting script."
@@ -67,6 +42,27 @@ quit_script() {
     exit 0
 }
 
+###########
+## MENUS ##
+###########
+main_menu (){
+choice=$(gum choose "Create a user" "Delete a user" "Quit")
+# case $"$@" in
+case $choice in
+    "Create a user")
+        while true; do
+            user_type=$(gum choose "Superadmin" "Adminuser" "Regular user" "Go back" "Quit")
+            usertype_menu "$user_type"
+        done
+        ;;
+    "Delete a user")
+        delete_user_menu
+        ;;
+    "Quit")
+        quit_script
+        ;;
+esac    
+}
 usertype_menu() {
     # case $user_type in
     case "$@" in
@@ -87,27 +83,33 @@ usertype_menu() {
             ;;
     esac
 }
-
-main_menu (){
-choice=$(gum choose "Create a user" "Delete a user" "Quit")
-# case $"$@" in
-case $choice in
-    "Create a user")
-        while true; do
-            user_type=$(gum choose "Superadmin" "Adminuser" "Regular user" "Go back" "Quit")
-            usertype_menu "$user_type"
-        done
-        ;;
-    "Delete a user")
-        delete_user_menu
-        ;;
-    "Quit")
-        quit_script
-        ;;
-esac    
+# Function to delete a user
+delete_user_menu() {
+    choice=$(gum choose "Yup" "Go back" "Quit")
+    choice_menu=$choice
+    case "$choice" in
+        "Yup")
+            delete_user "$choice_menu"
+            ;;
+        "Go back")
+            main_menu
+            ;;
+        "Quit")
+            quit_script
+            ;;
+    esac
+}
+# Function to go back to the first menu
+go_back() {
+    # echo "Returning to the main menu."
+    gum spin --spinner dot --title "Returning to the main menu..." -- sleep 1
+    usertype_menu
 }
 
-# Main function
+
+##########
+## MAIN ##
+##########
 main() {
     while true; do
         gum spin --spinner dot --title "Welcome to user management script..." -- sleep 1
