@@ -45,23 +45,23 @@ quit_script() {
 ###########
 ## MENUS ##
 ###########
-main_menu (){
-choice=$(gum choose "Create a user" "Delete a user" "Quit")
-# case $"$@" in
-case $choice in
-    "Create a user")
-        while true; do
-            user_type=$(gum choose "Superadmin" "Adminuser" "Regular user" "Go back" "Quit")
-            usertype_menu "$user_type"
-        done
-        ;;
-    "Delete a user")
-        delete_user_menu
-        ;;
-    "Quit")
-        quit_script
-        ;;
-esac    
+main_menu(){
+    choice=$(gum choose "Create a user" "Delete a user" "Quit")
+    # case $"$@" in
+    case $choice in
+        "Create a user")
+            while true; do
+                user_type=$(gum choose "Superadmin" "Adminuser" "Regular user" "Go back" "Quit")
+                usertype_menu "$user_type"
+            done
+            ;;
+        "Delete a user")
+            delete_user_menu
+            ;;
+        "Quit")
+            quit_script
+            ;;
+    esac
 }
 usertype_menu() {
     # case $user_type in
